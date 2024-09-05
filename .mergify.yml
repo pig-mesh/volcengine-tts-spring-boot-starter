@@ -1,0 +1,30 @@
+pull_request_rules:
+  - name: Add a queue label when PR is queued
+    description: Toggle the queue label when a pull request is (un)queued.
+    conditions:
+      - queue-position > 0
+    actions:
+      label:
+        toggle:
+          - merge-queued
+  - name: Ping PR author when conflicting
+    description: Warn the pull request author when their PR are conflicting
+    conditions:
+      - conflict
+      - '-closed'
+    actions:
+      comment:
+        message: >
+          👋 {{author}} your PR is conflicting and needs to be updated to be
+          merged
+  - name: Request review from team
+    description: Request review from a specific team when checks are green.
+    conditions:
+      - '-closed'
+      - '#approved-reviews-by=0'
+      - '#changes-requested-reviews-by=0'
+      - review-requested!=@TEAM_NAME_HERE
+    actions:
+      request_reviews:
+        teams:
+          - TEAM_NAME_HERE
